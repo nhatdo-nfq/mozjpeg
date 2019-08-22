@@ -74,12 +74,12 @@ if(CMAKE_ASM_NASM_COMPILER_TYPE MATCHES "yasm")
     if(${var} STREQUAL "-g")
       if(CMAKE_ASM_NASM_DEBUG_FORMAT)
         set_property(CACHE ${var} PROPERTY VALUE "-g ${CMAKE_ASM_NASM_DEBUG_FORMAT}")
-  else()
+      else()
         set_property(CACHE ${var} PROPERTY VALUE "")
       endif()
     endif()
   endforeach()
-  endif()
+endif()
 
 if(NOT WIN32 AND (CMAKE_POSITION_INDEPENDENT_CODE OR ENABLE_SHARED))
   set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -DPIC")
@@ -135,6 +135,9 @@ endif()
 if(MSVC_IDE)
   set(OBJDIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}")
   string(REGEX REPLACE " " ";" CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS}")
+elseif(XCODE)
+  set(OBJDIR "${CMAKE_CURRENT_BINARY_DIR}")
+  string(REGEX REPLACE " " ";" CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS}")
 endif()
 
 file(GLOB INC_FILES nasm/*.inc)
@@ -162,25 +165,25 @@ foreach(file ${SIMD_SOURCES})
       ${CMAKE_CURRENT_SOURCE_DIR}/${DEPFILE})
   endif()
   set(OBJECT_DEPENDS ${OBJECT_DEPENDS} ${INC_FILES})
-  if(MSVC_IDE)
+  if(MSVC_IDE OR XCODE)
     # The CMake Visual Studio generators do not work properly with the ASM_NASM
     # language, so we have to go rogue here and use a custom command like we
     # did in prior versions of libjpeg-turbo.  (This is why we can't have nice
     # things.)
     string(REGEX REPLACE "${CPU_TYPE}/" "" filename ${file})
-    set(SIMD_OBJ ${OBJDIR}/${filename}.obj)
+    set(SIMD_OBJ ${OBJDIR}/${filename}${CMAKE_C_OUTPUT_EXTENSION})
     add_custom_command(OUTPUT ${SIMD_OBJ} DEPENDS ${file} ${OBJECT_DEPENDS}
       COMMAND ${CMAKE_ASM_NASM_COMPILER} -f${CMAKE_ASM_NASM_OBJECT_FORMAT}
         ${CMAKE_ASM_NASM_FLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}
         -o${SIMD_OBJ})
-  set(SIMD_OBJS ${SIMD_OBJS} ${SIMD_OBJ})
+    set(SIMD_OBJS ${SIMD_OBJS} ${SIMD_OBJ})
   else()
     set_source_files_properties(${file} PROPERTIES OBJECT_DEPENDS
       "${OBJECT_DEPENDS}")
   endif()
 endforeach()
 
-if(MSVC_IDE)
+if(MSVC_IDE OR XCODE)
 set(SIMD_OBJS ${SIMD_OBJS} PARENT_SCOPE)
   add_library(simd OBJECT ${CPU_TYPE}/jsimd.c)
   add_custom_target(simd-objs DEPENDS ${SIMD_OBJS})
@@ -262,7 +265,7 @@ endif()
 # MIPS (GAS)
 ###############################################################################
 
-elseif(CPU_TYPE STREQUAL "mips")
+elseif(CPU_TYPE STREQUAL "mips" OR CPU_TYPE STREQUAL "mipsel")
 
 enable_language(ASM)
 
@@ -293,7 +296,7 @@ if(NOT HAVE_DSPR2)
   return()
 endif()
 
-add_library(simd OBJECT ${CPU_TYPE}/jsimd_dspr2.S ${CPU_TYPE}/jsimd.c)
+add_library(simd OBJECT mips/jsimd_dspr2.S mips/jsimd.c)
 
 if(CMAKE_POSITION_INDEPENDENT_CODE OR ENABLE_SHARED)
   set_target_properties(simd PROPERTIES POSITION_INDEPENDENT_CODE 1)
