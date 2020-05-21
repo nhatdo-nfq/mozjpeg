@@ -6,7 +6,7 @@ jobs:
           osx_image: xcode11
 before_install:
     - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y cmake zlib1g-dev git libpng16-dev nasm ; fi
-    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install nasm gcc ; fi
+    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install nasm ; fi
 compiler:
     #- clang
     - gcc
