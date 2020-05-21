@@ -1,7 +1,7 @@
 language: c
 os: linux
 before_install:
-    - sudo apt-get install -y cmake zlib1g-dev libpng16-16 git nasm
+    - sudo apt-get update -y && sudo apt-get install -y cmake zlib1g-dev libpng16-16 git nasm
 compiler:
     - clang
     - gcc
