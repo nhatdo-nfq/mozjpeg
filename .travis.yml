@@ -1,7 +1,7 @@
 language: c
 os: linux
 before_install:
-    - apt-get install -y cmake zlib1g-dev libpng-dev git cmake nasm
+    - sudo apt-get install -y cmake zlib1g-dev libpng-dev git cmake nasm
     - mkdir build && cd build
 compiler:
     - clang
