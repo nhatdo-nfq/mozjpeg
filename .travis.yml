@@ -1,16 +1,16 @@
 language: c
 jobs:
     include:
-        - os: linux
+        #- os: linux
         - os: osx
           osx_image: xcode11
 before_install:
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y cmake zlib1g-dev git libpng16-dev nasm ; fi
+    #- if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y cmake zlib1g-dev git libpng16-dev nasm ; fi
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install nasm ; fi
 compiler:
     #- clang
     - gcc
 script:
-    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir build && cd build && cmake -G"Unix Makefiles" -DPNG_SUPPORTED=TRUE ../ && make SHARED=0 CC='gcc -static' && make install ; fi
+    #- if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir build && cd build && cmake -G"Unix Makefiles" -DPNG_SUPPORTED=TRUE ../ && make SHARED=0 CC='gcc -static' && make install ; fi
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then mkdir build && cd build && cmake -G"Unix Makefiles" -DPNG_SUPPORTED=TRUE ../ && make SHARED=0 CC='gcc -static' && make install ; fi
 
