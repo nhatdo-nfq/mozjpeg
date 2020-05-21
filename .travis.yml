@@ -1,12 +1,8 @@
 language: c
-#os: linux
-#dist: bionic
 before_install:
     - sudo apt-get install -y cmake zlib1g-dev git libpng16-dev nasm
-    #- wget http://archive.ubuntu.com/ubuntu/pool/universe/libp/libpng1.6/libpng16-16_1.6.20-2_amd64.deb
-    #- sudo dpkg -i libpng16-16_1.6.20-2_amd64.deb
 compiler:
-    # - clang
+    - clang
     - gcc
 script: mkdir build && cd build && cmake -G"Unix Makefiles" -DPNG_SUPPORTED=TRUE ../ && make SHARED=0 CC='gcc -static' && make install
 
