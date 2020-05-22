@@ -1,16 +1,16 @@
 language: c
 jobs:
     include:
-        #- os: linux
+        - os: linux
         - os: osx
           osx_image: xcode11
 before_install:
-    #- if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y cmake zlib1g-dev git libpng16-dev nasm ; fi
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y cmake zlib1g-dev git libpng16-dev nasm ; fi
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install nasm zlib libpng ; fi
 compiler:
-    #- clang
+    - clang
     - gcc
 script:
-    #- if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir build && cd build && cmake -G"Unix Makefiles" -DPNG_SUPPORTED=TRUE ../ && make SHARED=0 CC='gcc -static' && make install ; fi
+    - if [ "$TRAVIS_OS_NAME" = "linux" ]; then mkdir build && cd build && cmake -G"Unix Makefiles" -DPNG_SUPPORTED=TRUE ../ && make SHARED=0 CC='gcc -static' && make install ; fi
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then mkdir build && cd build && cmake -G"Unix Makefiles" -DPNG_SUPPORTED=TRUE -DZLIB_LIBRARY=/usr/local/Cellar/zlib/1.2.11/lib/libz.a -DPNG_PNG_INCLUDE_DIR=/usr/local/Cellar/libpng/1.6.37/include -DPNG_LIBRARY=/usr/local/Cellar/libpng/1.6.37/lib/libpng.a ../ && make SHARED=0 CC='gcc -static' && sudo make install ; fi
 
